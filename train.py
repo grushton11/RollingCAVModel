@@ -1,3 +1,42 @@
+def _payment_type_mapping(var_value):
+    if var_value in ['CreditCard', 'CreditCardReferenceTransaction']:
+        return 'Credit Card'
+    if var_value in ['BankTransfer', 'Bank Transfer']:
+        return 'Bank Transfer'
+    if var_value in ['Amazon', 'Amazon Pay']:
+        return 'Amazon'
+    if var_value in ['Apple', 'Apple Pay']:
+        return 'Apple'
+    else:
+        return var_value
+
+def prepare_feature_payment_type(df):
+    payment_method_unfiltered = ['Apple', 'Apple Pay', 'Credit Card', 'CreditCard', 'CreditCardReferenceTransaction', 'BankTransfer', 'Bank Transfer', 'PayPal', 'Amazon', 'Amazon Pay', 'Direct Debit']
+    payment_method_feature_list = ['Apple', 'Credit Card', 'Bank Transfer', 'PayPal', 'Amazon', 'Direct Debit']
+
+    df['payment_method'] = df['payment_method'].apply(lambda x: _payment_type_mapping(x) if x in payment_method_unfiltered else np.nan)
+    return payment_method_feature_list
+
+def create_binary_targets(df, start_month):
+
+    # create new binary targets, one for each possible class
+    start_month = start_month - 1
+
+    class_labels = []
+
+    m12_label = 'is_12M_plus'
+    df[m12_label] = df['tenure_length_capped'].apply(lambda x: 1 if x == 12 else 0)
+
+    for target_month in range(11, start_month, -1):
+        temp_month_label = 'is_{}M'.format(target_month)
+        df[temp_month_label] = df['tenure_length_capped'].apply(lambda x: 1 if x == target_month else 0)
+
+        class_labels.append(temp_month_label)
+
+    all_class_labels = [m12_label] + class_labels
+    return df, all_class_labels
+
+
 def cyclical_feature_encode(data, col, max_val):
     data[col + '_sin'] = np.sin(2 * np.pi * data[col]/max_val)
     data[col + '_cos'] = np.cos(2 * np.pi * data[col]/max_val)
