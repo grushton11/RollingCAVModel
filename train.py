@@ -333,3 +333,37 @@ def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict,
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['train_set_recall_score'] = recall_score(Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], train_preds)
 
     return rfc_models
+
+
+def save_models(rfc_models, dss_folder_id, model_name):
+
+    models = dataiku.Folder(dss_folder_id)
+    path_to_folder = models.get_path()
+    current_time = dt.today().strftime('%Y-%m-%d_%H-%M-%S')
+    path_to_save_model = os.path.join(path_to_folder, current_time + '_' + model_name)
+
+    path_to_save_compressed_model = path_to_save_model + '_compressed_v01'
+    model_save_path = joblib.dump(rfc_models, path_to_save_compressed_model, compress = True)
+    print(model_save_path)
+
+def save_model_diagnostics(current_tm_list, target_month_list, model_diagnostics, output_table_name):
+
+    if calc_feature_importance:
+        model_diagnostics = calculate_feature_importance(df_features_train, features_in_model, rfc_models, class_labels, model_diagnostics, 1000)
+    else:
+        for i, current_tm in enumerate(current_tm_list):
+            for k, target_month in enumerate(target_month_list):
+                if k >= i:
+                    feature_importance_dict = dict(zip(X_train_dict['tm_{}_target_{}'.format(current_tm,target_month)].columns, rfc_models['tm_{}_target_{}'.format(current_tm,target_month)].feature_importances_))
+                    model_diagnostics['tm_{}_target_{}'.format(current_tm,target_month)]['feature_importance'] = feature_importance_dict
+
+    diagnostics_df = pd.DataFrame(model_diagnostics).transpose()
+    diagnostics_df['model_training_date'] = dt.today().strftime('%Y-%m-%d %H:%M')
+    diagnostics_df['model'] = diagnostics_df.index
+    diagnostics_df['training_calculation_date'] = dataiku.get_custom_variables()['training_calculation_date']
+
+    cols = ['model', 'model_training_date', 'training_calculation_date', 'train_start_date', 'train_end_date', 'training_samples_available', 'total_train_percentage_target_class', 'total_train_samples_target_class', 'total_train_samples_used', 'oob_score', 'model_parameter', 'feature_importance']
+    diagnostics_df = diagnostics_df[cols]
+
+    train_model_diagnostics = dataiku.Dataset(output_table_name)
+    train_model_diagnostics.write_with_schema(diagnostics_df)
