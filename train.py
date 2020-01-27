@@ -94,7 +94,7 @@ def preprocessing_function(df,
                            target_month_list,
                            preferred_sports_shortlist,
                            preferred_competition_shortlist,
-                           acquisiton_cohort_shortlist,
+                           acquisition_cohort_shortlist,
                            preferred_competition_dist_shortlist,
                            preferred_sport_dist_shortlist,
                            payment_method_shortlist):
