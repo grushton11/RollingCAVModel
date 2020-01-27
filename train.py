@@ -346,7 +346,7 @@ def save_models(rfc_models, dss_folder_id, model_name):
     model_save_path = joblib.dump(rfc_models, path_to_save_compressed_model, compress = True)
     print(model_save_path)
 
-def save_model_diagnostics(current_tm_list, target_month_list, model_diagnostics, output_table_name):
+def save_model_diagnostics(current_tm_list, target_month_list, model_diagnostics, X_train_dict, rfc_models, output_table_name):
 
     for i, current_tm in enumerate(current_tm_list):
         for k, target_month in enumerate(target_month_list):
