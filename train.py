@@ -214,7 +214,6 @@ def get_x_and_y_train(current_tm_list,
 
     return X_train_dict, Y_train_dict, model_diagnostics
 
-test
 
 def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict, model_diagnostics, rfc):
 
