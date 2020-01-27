@@ -348,14 +348,11 @@ def save_models(rfc_models, dss_folder_id, model_name):
 
 def save_model_diagnostics(current_tm_list, target_month_list, model_diagnostics, output_table_name):
 
-    if calc_feature_importance:
-        model_diagnostics = calculate_feature_importance(df_features_train, features_in_model, rfc_models, class_labels, model_diagnostics, 1000)
-    else:
-        for i, current_tm in enumerate(current_tm_list):
-            for k, target_month in enumerate(target_month_list):
-                if k >= i:
-                    feature_importance_dict = dict(zip(X_train_dict['tm_{}_target_{}'.format(current_tm,target_month)].columns, rfc_models['tm_{}_target_{}'.format(current_tm,target_month)].feature_importances_))
-                    model_diagnostics['tm_{}_target_{}'.format(current_tm,target_month)]['feature_importance'] = feature_importance_dict
+    for i, current_tm in enumerate(current_tm_list):
+        for k, target_month in enumerate(target_month_list):
+            if k >= i:
+                feature_importance_dict = dict(zip(X_train_dict['tm_{}_target_{}'.format(current_tm,target_month)].columns, rfc_models['tm_{}_target_{}'.format(current_tm,target_month)].feature_importances_))
+                model_diagnostics['tm_{}_target_{}'.format(current_tm,target_month)]['feature_importance'] = feature_importance_dict
 
     diagnostics_df = pd.DataFrame(model_diagnostics).transpose()
     diagnostics_df['model_training_date'] = dt.today().strftime('%Y-%m-%d %H:%M')
