@@ -36,6 +36,20 @@ def create_binary_targets(df, start_month):
     all_class_labels = [m12_label] + class_labels
     return df, all_class_labels
 
+def imputate_nans(df, vars_to_impute, imputations_dict):
+
+    imputations_list = list(imputations_dict.keys())
+    if not set(vars_to_impute).issubset(imputations_list):
+        raise ValueError('Please specify an imputation in imputations_dict for all variables in vars_to_impute.')
+
+
+    for var in vars_to_impute:
+        if var == 'months_to_competition_end':
+            df["months_to_competition_end"] = df["months_to_competition_end"].apply(lambda x: imputations_dict['months_to_competition_end'] if (math.isnan(x)) | (x > 12) else x)
+
+        else:
+            df[var] = df[var].fillna(imputations_dict[var])
+
 
 def cyclical_feature_encode(data, col, max_val):
     data[col + '_sin'] = np.sin(2 * np.pi * data[col]/max_val)
@@ -62,7 +76,7 @@ def preprocessing_function(df,
                            payment_method_shortlist):
 
     # Unify payment types (e.g. reference CreditCard and Credit Card both as Credit Card)
-    payment_method_feature_list = CAVmodel.prepare_feature_payment_type(df)
+    payment_method_feature_list = prepare_feature_payment_type(df)
 
     # Preprocessing features using the specified values as per the shortlists
     df['preferred_sport_by_hours'] = df['preferred_sport_by_hours'].apply(lambda x: x if x in preferred_sports_shortlist else 'Other')
@@ -121,7 +135,7 @@ def preprocessing_function(df,
         imputations_dict[i] = 0
 
     # Impute the nans
-    CAVmodel.imputate_nans(df, vars_to_impute, imputations_dict)
+    imputate_nans(df, vars_to_impute, imputations_dict)
 
     ## encode months to cyclical features - lmao does this even make sense?!
     cyclical_month_features_to_encode = ['tenure_month_start_calendar_month', 'access_start_calendar_month']
@@ -166,7 +180,7 @@ def preprocessing_function(df,
             if k >= i: model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)] = {}
 
     ## create binary target
-    df, class_labels = CAVmodel.create_binary_targets(df, start_month = 3)
+    df, class_labels = create_binary_targets(df, start_month = 3)
 
     required_train_set_columns = (['access_start_date', 'tenure_length_capped', 'is_churn']
                  + feature_list
