@@ -135,3 +135,13 @@ def get_output_file(df_rfc_results_dict):
     output_df = output_df.reset_index(drop=True)
 
     return output_df
+
+def split_out_japan_exception_customers(df_prep):
+
+    # Filters to split out Docomo sleeping babies
+    sleeping_baby_mask = df_prep['sleeping_baby'] == 1
+    is_docomo_mask = df_prep['acq_cohort_l3'] == 'Docomo'
+    df_docomo = df_prep[sleeping_baby_mask & is_docomo_mask]
+    df = df_prep[~(sleeping_baby_mask & is_docomo_mask)]
+
+    return df, df_docomo
