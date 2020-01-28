@@ -304,7 +304,7 @@ def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict,
                 # train model
                 start = dt.now()
                 print("training tm {} target {} model".format(current_tm,target_month))
-                
+
                 rfc = RandomForestClassifier(oob_score=True,
                              random_state = 0,
                              n_estimators=100,
@@ -373,3 +373,14 @@ def save_model_diagnostics(current_tm_list, target_month_list, model_diagnostics
 
     train_model_diagnostics = dataiku.Dataset(output_table_name)
     train_model_diagnostics.write_with_schema(diagnostics_df)
+
+
+def calculate_average_docomo_tenure_length(df_docomo, synchronization_time_days):
+
+    one_year_ago = parser.parse(dataiku.get_custom_variables()['training_calculation_date']) + relativedelta(months=-12, days = -synchronization_time_days)
+    two_years_ago = parser.parse(dataiku.get_custom_variables()['training_calculation_date']) + relativedelta(months=-24, days = -synchronization_time_days)
+    df_docomo_time_filter_max = df_docomo['access_start_date'] < one_year_ago
+    df_docomo_time_filter_min = df_docomo['access_start_date'] > two_years_ago
+
+    docomo_sleeping_babies_average_tenure_length = df_docomo[df_docomo_time_filter_max & df_docomo_time_filter_min]['tenure_length_capped'].mean()
+    return docomo_sleeping_babies_average_tenure_length
