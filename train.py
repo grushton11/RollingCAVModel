@@ -163,7 +163,6 @@ def preprocessing_function(df,
 
     ## encode months to cyclical features - lmao does this even make sense?!
     cyclical_month_features_to_encode = ['tenure_month_start_calendar_month', 'access_start_calendar_month']
-
     for var in cyclical_month_features_to_encode:
         cyclical_feature_encode(df, var, 12)
 
@@ -305,8 +304,9 @@ def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict,
                 # train model
                 start = dt.now()
                 print("training tm {} target {} model".format(current_tm,target_month))
+                clf = rfc.copy()
 
-                rfc_model = rfc.fit(X_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)])
+                rfc_model = clf.fit(X_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)])
 
                 print("training tm {} target {} model took: {}".format(current_tm, target_month, dt.now()-start))
                 print("trained tm {} target {} model with oob score: ".format(current_tm, target_month) + str(rfc_model.oob_score_))
@@ -332,7 +332,7 @@ def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict,
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['train_set_precision_score'] = precision_score(Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], train_preds)
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['train_set_recall_score'] = recall_score(Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], train_preds)
 
-    return rfc_models
+    return rfc_models, model_diagnostics, train_preds
 
 
 def save_models(rfc_models, dss_folder_id, model_name):
