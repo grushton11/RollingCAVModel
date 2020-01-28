@@ -320,7 +320,7 @@ def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict,
                 class_weight = total_target_class / float(total_train)
 
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['oob_score'] = rfc_model.oob_score_
-                model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['model_parameter'] = rfc
+                model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['model_parameter'] = clf
 
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['total_train_samples_used'] = total_train
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['total_train_samples_target_class'] = total_target_class
@@ -332,7 +332,7 @@ def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict,
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['train_set_precision_score'] = precision_score(Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], train_preds)
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['train_set_recall_score'] = recall_score(Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], train_preds)
 
-    return rfc_models, model_diagnostics, train_preds
+    return rfc_models, model_diagnostics
 
 
 def save_models(rfc_models, dss_folder_id, model_name):
