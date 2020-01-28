@@ -291,7 +291,7 @@ def get_x_and_y_train(current_tm_list,
     return X_train_dict, Y_train_dict, model_diagnostics
 
 
-def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict, model_diagnostics, rfc):
+def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict, model_diagnostics):
 
     model_list = []
     rfc_models = {}
@@ -304,9 +304,18 @@ def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict,
                 # train model
                 start = dt.now()
                 print("training tm {} target {} model".format(current_tm,target_month))
-                clf = rfc.copy()
+                
+                rfc = RandomForestClassifier(oob_score=True,
+                             random_state = 0,
+                             n_estimators=100,
+                             min_samples_split=0.01,
+                             max_depth=5,
+                             #min_samples_leaf=0.01,
+                             #class_weight = 'balanced',
+                             #max_features = 0.3,
+                            )
 
-                rfc_model = clf.fit(X_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)])
+                rfc_model = rfc.fit(X_train_dict['tm_{}_target_{}'.format(current_tm, target_month)], Y_train_dict['tm_{}_target_{}'.format(current_tm, target_month)])
 
                 print("training tm {} target {} model took: {}".format(current_tm, target_month, dt.now()-start))
                 print("trained tm {} target {} model with oob score: ".format(current_tm, target_month) + str(rfc_model.oob_score_))
@@ -320,7 +329,7 @@ def train_models(current_tm_list, target_month_list, X_train_dict, Y_train_dict,
                 class_weight = total_target_class / float(total_train)
 
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['oob_score'] = rfc_model.oob_score_
-                model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['model_parameter'] = clf
+                model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['model_parameter'] = rfc
 
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['total_train_samples_used'] = total_train
                 model_diagnostics['tm_{}_target_{}'.format(current_tm, target_month)]['total_train_samples_target_class'] = total_target_class
