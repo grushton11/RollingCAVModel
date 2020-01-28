@@ -84,18 +84,19 @@ def get_predictions_df_dict(X_test_dict, rfc_models_dict):
     predictions_df_dict = {}
 
     for current_month in X_test_dict.keys():
+        print(current_month)
         predictions_df_dict[current_month] = X_test_dict[current_month].copy()
         predictions_final_df = pd.DataFrame([])
         predictions_final_df['tenure_month'] = predictions_df_dict[current_month]['tenure_month']
 
         for i in rfc_models_dict[current_month].keys():
+            print(i)
             if X_test_dict[current_month].size > 0:
                 predictions = [x[1] for x in rfc_models_dict[current_month][i].predict_proba(X_test_dict[current_month])]
             else:
                 predictions = []
             predictions_df_dict[current_month]['pred_proba_' + i] = predictions
             predictions_final_df['pred_proba_' + i] = predictions
-            predictions_df_dict[current_month]['pred_proba_' + i] = predictions
 
         final_prediction = get_final_prediction_from_probabilities(predictions_final_df)
         predictions_df_dict[current_month]['prediction'] = final_prediction['predicted']
