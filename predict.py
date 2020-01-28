@@ -69,3 +69,68 @@ def get_final_prediction_from_probabilities(df):
     df_preds['predicted'] = max_new
 
     return df_preds
+
+def get_rfc_models_dict(current_tm_list, target_month_list, rfc_models):
+    rfc_models_dict = {}
+    for i in current_tm_list:
+        in_tm_dict = {}
+        for target_index, j in enumerate(target_month_list):
+            if target_index+3 >= i:
+                in_tm_dict['target_{}'.format(j)] = rfc_models['tm_{}_target_{}'.format(i, j)]
+        rfc_models_dict['tm_{}'.format(i)] = in_tm_dict
+    return rfc_models_dict
+
+def get_predictions_df_dict(X_test_dict, rfc_models_dict):
+    predictions_df_dict = {}
+
+    for current_month in X_test_dict.keys():
+        predictions_df_dict[current_month] = X_test_dict[current_month].copy()
+        predictions_final_df = pd.DataFrame([])
+        predictions_final_df['tenure_month'] = predictions_df_dict[current_month]['tenure_month']
+
+        for i in rfc_models_dict[current_month].keys():
+            if X_test_dict[current_month].size > 0:
+                predictions = [x[1] for x in rfc_models_dict[current_month][i].predict_proba(X_test_dict[current_month])]
+            else:
+                predictions = []
+            predictions_df_dict[current_month]['pred_proba_' + i] = predictions
+            predictions_final_df['pred_proba_' + i] = predictions
+            predictions_df_dict[current_month]['pred_proba_' + i] = predictions
+
+        final_prediction = get_final_prediction_from_probabilities(predictions_final_df)
+        predictions_df_dict[current_month]['prediction'] = final_prediction['predicted']
+
+    return predictions_df_dict
+
+def create_results_dict(predictions_df_dict):
+    df_rfc_results_dict = {}
+    for current_month in predictions_df_dict.keys():
+        df_rfc_results_dict[current_month] = pd.DataFrame({'tenure_months_completed' : predictions_df_dict[current_month]['tenure_month'],
+                                                           'current_tenure_month' : predictions_df_dict[current_month]['tenure_month'] + 1,
+                                                           'prediction': predictions_df_dict[current_month]['prediction']
+                                                          })
+    return df_rfc_results_dict
+
+
+def add_prediction_identifiers(df_rfc_results_dict, test_dict):
+
+    identifier_columns = ['cust_account_id','cust_territory', 'cust_country','access_start_date']
+    prediction_columns = ['tenure_months_completed', 'current_tenure_month', 'prediction']
+
+    for current_month in df_rfc_results_dict:
+        df_rfc_results_dict[current_month] = df_rfc_results_dict[current_month].join(test_dict[current_month])[identifier_columns + prediction_columns]
+        prediction_date = dataiku.get_custom_variables()['prediction_date']
+        df_rfc_results_dict[current_month]['prediction_date'] = prediction_date
+        df_rfc_results_dict[current_month]['inserted_at'] = dt.today().strftime('%Y-%m-%d %H:%M')
+
+    return df_rfc_results_dict
+
+def get_output_file(df_rfc_results_dict):
+    df_list = []
+    for current_month in df_rfc_results_dict.keys():
+        df_list.append(df_rfc_results_dict[current_month])
+
+    output_df = pd.concat(df_list)
+    output_df = output_df.reset_index(drop=True)
+
+    return output_df
