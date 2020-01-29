@@ -84,13 +84,12 @@ def get_predictions_df_dict(X_test_dict, rfc_models_dict):
     predictions_df_dict = {}
 
     for current_month in X_test_dict.keys():
-        print(current_month)
         predictions_df_dict[current_month] = X_test_dict[current_month].copy()
         predictions_final_df = pd.DataFrame([])
         predictions_final_df['tenure_month'] = predictions_df_dict[current_month]['tenure_month']
 
         for i in rfc_models_dict[current_month].keys():
-            print(i)
+            print('Getting predictions for {} - {}'.format(current_month,i))
             if X_test_dict[current_month].size > 0:
                 predictions = [x[1] for x in rfc_models_dict[current_month][i].predict_proba(X_test_dict[current_month])]
             else:
@@ -145,3 +144,23 @@ def split_out_japan_exception_customers(df_prep):
     df = df_prep[~(sleeping_baby_mask & is_docomo_mask)]
 
     return df, df_docomo
+
+
+def get_docomo_predictions(rfc_models, df_docomo_test):
+    docomo_avg_per_current_tm_dict = {}
+    for i in current_tm_list:
+        docomo_avg_per_current_tm_dict[i-1] = rfc_models['docomo_tm_{}'.format(i)]
+
+    df_docomo_w_prediction = df_docomo_test.copy()
+    df_docomo_w_prediction['prediction'] = df_docomo_w_prediction['tenure_month'].map(docomo_avg_per_current_tm_dict)
+
+    identifier_columns = ['cust_account_id','cust_territory', 'cust_country','access_start_date']
+    prediction_columns = ['tenure_months_completed', 'current_tenure_month', 'prediction']
+
+    df_docomo_w_prediction['tenure_months_completed'] = df_docomo_w_prediction['tenure_month']
+    df_docomo_w_prediction['current_tenure_month'] = df_docomo_w_prediction['tenure_month']+1
+    df_docomo_w_prediction = df_docomo_w_prediction[identifier_columns + prediction_columns]
+    df_docomo_w_prediction['prediction_date'] = prediction_date
+    df_docomo_w_prediction['inserted_at'] = dt.today().strftime('%Y-%m-%d %H:%M')
+
+    return df_docomo_w_prediction
