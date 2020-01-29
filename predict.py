@@ -146,7 +146,7 @@ def split_out_japan_exception_customers(df_prep):
     return df, df_docomo
 
 
-def get_docomo_predictions(rfc_models, df_docomo_test):
+def get_docomo_predictions(current_tm_list, rfc_models, df_docomo_test):
     docomo_avg_per_current_tm_dict = {}
     for i in current_tm_list:
         docomo_avg_per_current_tm_dict[i-1] = rfc_models['docomo_tm_{}'.format(i)]
