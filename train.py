@@ -215,7 +215,7 @@ def preprocessing_function(df,
         df_features = df.loc[:,required_train_set_columns].copy()
 
         # Create a list containing all the global models that aren't a part of the local model list
-        class_labels_to_drop = [i for i in class_labels if i not in allowed_class_labels]
+        class_labels_to_drop = [i for i in class_labels if i not in target_month_list]
         print('dropping the following target month cols: {}'.format(class_labels_to_drop))
 
         df_features = df_features.drop(class_labels_to_drop, axis=1)
