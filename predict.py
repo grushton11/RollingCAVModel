@@ -156,6 +156,7 @@ def get_docomo_predictions(current_tm_list, rfc_models, df_docomo_test):
 
     identifier_columns = ['cust_account_id','cust_territory', 'cust_country','access_start_date']
     prediction_columns = ['tenure_months_completed', 'current_tenure_month', 'prediction']
+    prediction_date = dataiku.get_custom_variables()['prediction_date']
 
     df_docomo_w_prediction['tenure_months_completed'] = df_docomo_w_prediction['tenure_month']
     df_docomo_w_prediction['current_tenure_month'] = df_docomo_w_prediction['tenure_month']+1
