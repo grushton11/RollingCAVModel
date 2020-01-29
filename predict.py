@@ -165,3 +165,31 @@ def get_docomo_predictions(current_tm_list, rfc_models, df_docomo_test):
     df_docomo_w_prediction['inserted_at'] = dt.today().strftime('%Y-%m-%d %H:%M')
 
     return df_docomo_w_prediction
+
+
+def combine_local_global_models(global_rfc_models,local_rfc_models):
+
+    # Create empty list that will contain the keys of the local and global model dicts
+    global_models_list = []
+    local_models_list = []
+
+    # populate the lists
+    for i in global_rfc_models.keys():
+        global_models_list.append(i)
+
+    for i in local_rfc_models.keys():
+        local_models_list.append(i)
+
+    # Create a list containing all the global models that aren't a part of the local model list
+    missing_local_models_list = [i for i in global_models_list if i not in local_models_list]
+
+    # Create a dict of the globals models required
+    required_global_rfc_models = {}
+    for i in missing_local_models_list:
+        required_global_rfc_models[i] = global_rfc_models[i]
+
+    # Create a final dict which contains a combination of local and global models to be used to predict on
+    rfc_models = local_rfc_models.copy()
+    rfc_models.update(required_global_rfc_models)
+
+    return rfc_models
