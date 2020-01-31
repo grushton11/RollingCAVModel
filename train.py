@@ -408,3 +408,39 @@ def calculate_average_docomo_tenure_length(df_docomo, synchronization_time_days)
 
     docomo_sleeping_babies_average_tenure_length = df_docomo[df_docomo_time_filter_max & df_docomo_time_filter_min]['tenure_length_capped'].mean()
     return docomo_sleeping_babies_average_tenure_length
+
+def train_regression_model(current_tm_list, df_test):
+
+    train_regr_dict = {}
+    train_regr_out_dict = {}
+    X_regr_dict = {}
+    Y_regr_dict = {}
+
+    for i in current_tm_list:
+        train_regr_dict['tm_{}'.format(i)] = df_test[df_test['tenure_month'] == i-1]
+        df_out, model_diagnostics, class_labels = preprocessing_function(df_test[df_test['tenure_month'] == i-1])
+        train_regr_out_dict['tm_{}'.format(i)] = df_out
+
+    for i in train_regr_out_dict.keys():
+        X_regr_dict[i], Y_regr_dict[i] = get_x_and_y_test(train_regr_out_dict[i], class_labels)
+        Y_regr_dict[i] = Y_regr_dict[i]['tenure_length_capped']
+
+    xgb_model_regr_dict = {}
+    y_labels_dict = Y_regr_dict.copy()
+
+    for i, current_tm in enumerate(X_regr_dict.keys()):
+        start = dt.now()
+        print("training xgb regressor for users in current month {}".format(current_tm))
+        clf = xgb.XGBRegressor(objective ='reg:squarederror',
+                              learning_rate = 0.1,
+                              max_depth = 8,
+                              gamma = 0.5,
+                              reg_lambda = 1,
+                              n_estimators = 100,
+                              )
+
+        clf = clf.fit(X_regr_dict[current_tm], y_labels_dict[current_tm])
+        xgb_model_regr_dict[current_tm] = clf
+        print('training took: {}'.format(dt.now()-start))
+
+    return xgb_model_regr_dict
