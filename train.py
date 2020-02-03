@@ -406,7 +406,12 @@ def calculate_average_docomo_tenure_length(df_docomo, synchronization_time_days)
     df_docomo_time_filter_max = df_docomo['access_start_date'] < one_year_ago
     df_docomo_time_filter_min = df_docomo['access_start_date'] > two_years_ago
 
-    docomo_sleeping_babies_average_tenure_length = df_docomo[df_docomo_time_filter_max & df_docomo_time_filter_min]['tenure_length_capped'].mean()
+    df_docomo_filtered = df_docomo[df_docomo_time_filter_max & df_docomo_time_filter_min].copy()
+    if df_docomo_filtered.size > 0:
+        docomo_sleeping_babies_average_tenure_length = df_docomo_filtered['tenure_length_capped'].mean()
+    else:
+        docomo_sleeping_babies_average_tenure_length = 12.0
+
     return docomo_sleeping_babies_average_tenure_length
 
 def get_regr_models(df_out, current_tm_list):
