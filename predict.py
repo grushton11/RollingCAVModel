@@ -153,7 +153,7 @@ def get_docomo_predictions(current_tm_list, rfc_models, df_docomo_test):
         if 'docomo_tm_{}'.format(i) in rfc_models.keys():
             docomo_avg_per_current_tm_dict[i-1] = rfc_models['docomo_tm_{}'.format(i)]
         else:
-            rfc_models['docomo_tm_{}'.format(i)] = 12
+            rfc_models['docomo_tm_{}'.format(i)] = 12.0
 
     df_docomo_w_prediction = df_docomo_test.copy()
     df_docomo_w_prediction['prediction'] = df_docomo_w_prediction['tenure_month'].map(docomo_avg_per_current_tm_dict)
