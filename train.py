@@ -409,23 +409,23 @@ def calculate_average_docomo_tenure_length(df_docomo, synchronization_time_days)
     docomo_sleeping_babies_average_tenure_length = df_docomo[df_docomo_time_filter_max & df_docomo_time_filter_min]['tenure_length_capped'].mean()
     return docomo_sleeping_babies_average_tenure_length
 
-def train_regression_model(current_tm_list, df_test):
+def get_regr_models(df_out, current_tm_list):
 
-    train_regr_dict = {}
-    train_regr_out_dict = {}
+    regr_max_date = (parser.parse(dataiku.get_custom_variables()['training_calculation_date']) +  relativedelta(months=-11)).strftime('%Y-%m-%d')
+    regr_df = df_out[df_out['access_start_date'] <= (dataiku.get_custom_variables()['training_calculation_date']) ]
+
     X_regr_dict = {}
     Y_regr_dict = {}
 
     for i in current_tm_list:
-        train_regr_dict['tm_{}'.format(i)] = df_test[df_test['tenure_month'] == i-1]
-        df_out, model_diagnostics, class_labels = preprocessing_function(df_test[df_test['tenure_month'] == i-1])
-        train_regr_out_dict['tm_{}'.format(i)] = df_out
-
-    for i in train_regr_out_dict.keys():
-        X_regr_dict[i], Y_regr_dict[i] = get_x_and_y_test(train_regr_out_dict[i], class_labels)
-        Y_regr_dict[i] = Y_regr_dict[i]['tenure_length_capped']
+            current_tm_df = regr_df[regr_df['tenure_month'] == i-1]
+            Y_regr_dict['tm_{}'.format(i)] = current_tm_df['tenure_length_capped']
+            X_regr_dict['tm_{}'.format(i)] = current_tm_df.copy()
+            X_regr_dict['tm_{}'.format(i)] = X_regr_dict['tm_{}'.format(i)].drop(class_labels, axis=1)
+            X_regr_dict['tm_{}'.format(i)] = X_regr_dict['tm_{}'.format(i)].drop(['access_start_date', 'tenure_length_capped', 'is_churn'], axis=1)
 
     xgb_model_regr_dict = {}
+    xgb_model_regr_labels = X_regr_dict['tm_3'].columns.values
     y_labels_dict = Y_regr_dict.copy()
 
     for i, current_tm in enumerate(X_regr_dict.keys()):
@@ -433,14 +433,14 @@ def train_regression_model(current_tm_list, df_test):
         print("training xgb regressor for users in current month {}".format(current_tm))
         clf = xgb.XGBRegressor(objective ='reg:squarederror',
                               learning_rate = 0.1,
-                              max_depth = 8,
-                              gamma = 0.5,
+                              max_depth = 7,
+                              gamma = 0,
                               reg_lambda = 1,
-                              n_estimators = 100,
+                              n_estimators = 25,
                               )
 
         clf = clf.fit(X_regr_dict[current_tm], y_labels_dict[current_tm])
         xgb_model_regr_dict[current_tm] = clf
         print('training took: {}'.format(dt.now()-start))
 
-    return xgb_model_regr_dict
+    return xgb_model_regr_dict, xgb_model_regr_labels
