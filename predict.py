@@ -126,7 +126,7 @@ def create_results_dict(predictions_df_dict):
 def add_prediction_identifiers(df_rfc_results_dict, test_dict):
 
     identifier_columns = ['cust_account_id','cust_territory', 'cust_country','access_start_date']
-    prediction_columns = ['tenure_months_completed', 'current_tenure_month', 'prediction']
+    prediction_columns = ['tenure_months_completed', 'current_tenure_month', 'prediction', 'pred_proba_target_is_3M','pred_proba_target_is_4M','pred_proba_target_is_5M','pred_proba_target_is_6M','pred_proba_target_is_7M','pred_proba_target_is_8M','pred_proba_target_is_9M','pred_proba_target_is_10M','pred_proba_target_is_11M','pred_proba_target_is_12M_plus']
 
     for current_month in df_rfc_results_dict:
         df_rfc_results_dict[current_month] = df_rfc_results_dict[current_month].join(test_dict[current_month])[identifier_columns + prediction_columns]
