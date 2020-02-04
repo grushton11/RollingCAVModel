@@ -109,6 +109,17 @@ def create_results_dict(predictions_df_dict):
                                                            'current_tenure_month' : predictions_df_dict[current_month]['tenure_month'] + 1,
                                                            'prediction': predictions_df_dict[current_month]['prediction']
                                                           })
+        df_rfc_results_dict[current_month]['pred_proba_target_is_3M'] = predictions_df_dict[current_month]['pred_proba_target_is_3M'] if 'pred_proba_target_is_3M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_4M'] = predictions_df_dict[current_month]['pred_proba_target_is_4M'] if 'pred_proba_target_is_4M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_5M'] = predictions_df_dict[current_month]['pred_proba_target_is_5M'] if 'pred_proba_target_is_5M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_6M'] = predictions_df_dict[current_month]['pred_proba_target_is_6M'] if 'pred_proba_target_is_6M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_7M'] = predictions_df_dict[current_month]['pred_proba_target_is_7M'] if 'pred_proba_target_is_7M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_8M'] = predictions_df_dict[current_month]['pred_proba_target_is_8M'] if 'pred_proba_target_is_8M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_9M'] = predictions_df_dict[current_month]['pred_proba_target_is_9M'] if 'pred_proba_target_is_9M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_10M'] = predictions_df_dict[current_month]['pred_proba_target_is_10M'] if 'pred_proba_target_is_10M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_11M'] = predictions_df_dict[current_month]['pred_proba_target_is_11M'] if 'pred_proba_target_is_11M' in predictions_df_dict[current_month].columns else 0
+        df_rfc_results_dict[current_month]['pred_proba_target_is_12M_plus'] = predictions_df_dict[current_month]['pred_proba_target_is_12M_plus'] if 'pred_proba_target_is_12M_plus' in predictions_df_dict[current_month].columns else 0
+
     return df_rfc_results_dict
 
 
