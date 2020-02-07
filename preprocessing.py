@@ -162,15 +162,13 @@ def preprocessing_function(df,
     imputate_nans(df, vars_to_impute, imputations_dict)
 
     ## encode months to cyclical features - lmao does this even make sense?!
-    cyclical_month_features_to_encode = ['tenure_month_start_calendar_month', 'access_start_calendar_month']
+    cyclical_month_features_to_encode = ['access_start_calendar_month']
     for var in cyclical_month_features_to_encode:
         cyclical_feature_encode(df, var, 12)
 
     # Select model features to use
     feature_list = [
         'tenure_month',
-        'tenure_month_start_calendar_month_sin',
-        'tenure_month_start_calendar_month_cos',
         'access_start_calendar_month_sin',
         'access_start_calendar_month_cos',
         'ft_with_gc',
