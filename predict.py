@@ -131,8 +131,8 @@ def add_prediction_identifiers(df_rfc_results_dict, test_dict):
     for current_month in df_rfc_results_dict:
         df_rfc_results_dict[current_month] = df_rfc_results_dict[current_month].join(test_dict[current_month])[identifier_columns + prediction_columns]
         prediction_date = dataiku.get_custom_variables()['prediction_date']
-        df_rfc_results_dict[current_month]['prediction_date'] = prediction_date
-        df_rfc_results_dict[current_month]['inserted_at'] = dt.today().strftime('%Y-%m-%d %H:%M')
+        df_rfc_results_dict[current_month]['prediction_date'] = datetime_object = dt.strptime(prediction_date, '%Y-%m-%d')
+        df_rfc_results_dict[current_month]['inserted_at'] = dt.today()
 
     return df_rfc_results_dict
 
