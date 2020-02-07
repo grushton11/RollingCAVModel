@@ -163,15 +163,13 @@ def preprocessing_function(df,
     imputate_nans(df, vars_to_impute, imputations_dict)
 
     ## encode months to cyclical features - lmao does this even make sense?!
-    cyclical_month_features_to_encode = ['tenure_month_start_calendar_month', 'access_start_calendar_month']
+    cyclical_month_features_to_encode = ['access_start_calendar_month']
     for var in cyclical_month_features_to_encode:
         cyclical_feature_encode(df, var, 12)
 
     # Select model features to use
     feature_list = [
         'tenure_month',
-        'tenure_month_start_calendar_month_sin',
-        'tenure_month_start_calendar_month_cos',
         'access_start_calendar_month_sin',
         'access_start_calendar_month_cos',
         'ft_with_gc',
@@ -274,7 +272,6 @@ def get_x_and_y_train(current_tm_list,
                 # Create mask filters based on the calculation date and apsply using the access start date field
                 start_mask = current_tm_df['access_start_date'] >= training_start_date_str
                 end_mask = current_tm_df['access_start_date'] <= training_end_date_str
-                print("current tenure month: {}, train tenure month: {}, binary target tenure month: {}".format(current_tm, current_tm-1, target_month))
                 current_tm_df = current_tm_df.loc[start_mask & end_mask]
 
                 # Define the class labels to drop
