@@ -32,7 +32,7 @@ def _payment_type_mapping(var_value):
     if var_value in ['Apple', 'Apple Pay']:
         return 'Apple'
     else:
-        return var_values
+        return var_value
 
 def prepare_feature_payment_type(df):
     payment_method_unfiltered = ['Apple', 'Apple Pay', 'Credit Card', 'CreditCard', 'CreditCardReferenceTransaction', 'BankTransfer', 'Bank Transfer', 'PayPal', 'Amazon', 'Amazon Pay', 'Direct Debit']
@@ -40,6 +40,13 @@ def prepare_feature_payment_type(df):
 
     df['payment_method'] = df['payment_method'].apply(lambda x: _payment_type_mapping(x) if x in payment_method_unfiltered else np.nan)
     return payment_method_feature_list
+
+def _cohort_type_mapping(var_value):
+    if var_value in ['Google', 'Google Tracking ID']:
+        return 'Google'
+    else:
+        return var_value
+
 
 def create_binary_targets(df, start_month):
 
@@ -108,6 +115,7 @@ def preprocessing_function(df,
     df['preferred_competition_by_hours'] = df['preferred_competition_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
     df['preferred_competition_1_in_trip_by_hours'] = df['preferred_competition_1_in_trip_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
     df['preferred_competition_2_in_trip_by_hours'] = df['preferred_competition_2_in_trip_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
+    df['acq_cohort_l3'] = df['acq_cohort_l3'].apply(lambda x: _cohort_type_mapping(x))
     df['acq_cohort_l3'] = df['acq_cohort_l3'].apply(lambda x: x if x in acquisition_cohort_shortlist else 'Other')
     df['shared_account_proxy_binary'] = df['shared_account_proxy'].apply(lambda x: x if x > 0 else 0)
     df['previous_churn_binary'] = df['count_previous_churn'].apply(lambda x: 1 if x > 0 else 0)
