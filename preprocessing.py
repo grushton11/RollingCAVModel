@@ -32,13 +32,13 @@ def _payment_type_mapping(var_value):
     if var_value in ['Apple', 'Apple Pay']:
         return 'Apple'
     else:
-        return var_value
+        return var_values
 
 def prepare_feature_payment_type(df):
     payment_method_unfiltered = ['Apple', 'Apple Pay', 'Credit Card', 'CreditCard', 'CreditCardReferenceTransaction', 'BankTransfer', 'Bank Transfer', 'PayPal', 'Amazon', 'Amazon Pay', 'Direct Debit']
     payment_method_feature_list = ['Apple', 'Credit Card', 'Bank Transfer', 'PayPal', 'Amazon', 'Direct Debit']
 
-    df['payment_method_f'] = df['payment_method_f'].apply(lambda x: _payment_type_mapping(x) if x in payment_method_unfiltered else np.nan)
+    df['payment_method'] = df['payment_method'].apply(lambda x: _payment_type_mapping(x) if x in payment_method_unfiltered else np.nan)
     return payment_method_feature_list
 
 def create_binary_targets(df, start_month):
@@ -111,7 +111,7 @@ def preprocessing_function(df,
     df['acq_cohort_l3'] = df['acq_cohort_l3'].apply(lambda x: x if x in acquisition_cohort_shortlist else 'Other')
     df['shared_account_proxy_binary'] = df['shared_account_proxy'].apply(lambda x: x if x > 0 else 0)
     df['previous_churn_binary'] = df['count_previous_churn'].apply(lambda x: 1 if x > 0 else 0)
-    df['payment_method_f'] = df['payment_method_f'].apply(lambda x: x if x in payment_method_shortlist else 'Other')
+    df['payment_method'] = df['payment_method'].apply(lambda x: x if x in payment_method_shortlist else 'Other')
 
 
     # Defining which categorical features we will dummy encode
@@ -120,7 +120,7 @@ def preprocessing_function(df,
     competition_categoricals = ['preferred_competition_by_hours', u'preferred_competition_1_in_trip_by_hours', u'preferred_competition_2_in_trip_by_hours']
     competition_dist_categoricals = [u'preferred_competition_in_trip_distribution_desc']
     acq_cohort_categoricals = [u'acq_cohort_l3']
-    payment_method_categoricals = ['payment_method_f']
+    payment_method_categoricals = ['payment_method']
 
     categoricals_to_dummy_encode = payment_method_categoricals + acq_cohort_categoricals + sport_categoricals + sport_dist_categoricals + competition_categoricals + competition_dist_categoricals
     categoricals = [sport_categoricals, sport_dist_categoricals, competition_categoricals, competition_dist_categoricals, acq_cohort_categoricals, payment_method_categoricals]
