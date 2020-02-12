@@ -131,7 +131,7 @@ def add_prediction_identifiers(df_rfc_results_dict, test_dict):
     for current_month in df_rfc_results_dict:
         df_rfc_results_dict[current_month] = df_rfc_results_dict[current_month].join(test_dict[current_month])[identifier_columns + prediction_columns]
         prediction_date = dataiku.get_custom_variables()['prediction_date']
-        df_rfc_results_dict[current_month]['prediction_date'] = datetime_object = dt.strptime(prediction_date, '%Y-%m-%d')
+        df_rfc_results_dict[current_month]['prediction_date'] = dt.strptime(prediction_date, '%Y-%m-%d')
         df_rfc_results_dict[current_month]['inserted_at'] = dt.today()
 
     return df_rfc_results_dict
@@ -176,8 +176,8 @@ def get_docomo_predictions(current_tm_list, rfc_models, df_docomo_test):
     df_docomo_w_prediction['tenure_months_completed'] = df_docomo_w_prediction['tenure_month']
     df_docomo_w_prediction['current_tenure_month'] = df_docomo_w_prediction['tenure_month']+1
     df_docomo_w_prediction = df_docomo_w_prediction[identifier_columns + prediction_columns]
-    df_docomo_w_prediction['prediction_date'] = prediction_date
-    df_docomo_w_prediction['inserted_at'] = dt.today().strftime('%Y-%m-%d %H:%M')
+    df_docomo_w_prediction['prediction_date'] = dt.strptime(prediction_date, '%Y-%m-%d')
+    df_docomo_w_prediction['inserted_at'] = dt.today()
 
     return df_docomo_w_prediction
 
