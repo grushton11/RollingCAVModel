@@ -98,7 +98,7 @@ def get_predictions_df_dict(X_test_dict, rfc_models_dict):
             predictions_final_df['pred_proba_' + i] = predictions
 
         final_prediction = get_final_prediction_from_probabilities(predictions_final_df)
-        predictions_df_dict[current_month]['prediction'] = final_prediction['predicted']
+        predictions_df_dict[current_month]['predicted'] = final_prediction['predicted']
 
     return predictions_df_dict
 
@@ -107,7 +107,7 @@ def create_results_dict(predictions_df_dict):
     for current_month in predictions_df_dict.keys():
         df_rfc_results_dict[current_month] = pd.DataFrame({'tenure_months_completed' : predictions_df_dict[current_month]['tenure_month'],
                                                            'current_tenure_month' : predictions_df_dict[current_month]['tenure_month'] + 1,
-                                                           'prediction': predictions_df_dict[current_month]['prediction']
+                                                           'predicted': predictions_df_dict[current_month]['prediction']
                                                           })
         df_rfc_results_dict[current_month]['pred_proba_target_is_3M'] = predictions_df_dict[current_month]['pred_proba_target_is_3M'] if 'pred_proba_target_is_3M' in predictions_df_dict[current_month].columns else 0
         df_rfc_results_dict[current_month]['pred_proba_target_is_4M'] = predictions_df_dict[current_month]['pred_proba_target_is_4M'] if 'pred_proba_target_is_4M' in predictions_df_dict[current_month].columns else 0
@@ -126,7 +126,7 @@ def create_results_dict(predictions_df_dict):
 def add_prediction_identifiers(df_rfc_results_dict, test_dict):
 
     identifier_columns = ['cust_account_id','cust_territory', 'cust_country','access_start_date']
-    prediction_columns = ['tenure_months_completed', 'current_tenure_month', 'prediction', 'pred_proba_target_is_3M','pred_proba_target_is_4M','pred_proba_target_is_5M','pred_proba_target_is_6M','pred_proba_target_is_7M','pred_proba_target_is_8M','pred_proba_target_is_9M','pred_proba_target_is_10M','pred_proba_target_is_11M','pred_proba_target_is_12M_plus']
+    prediction_columns = ['tenure_months_completed', 'current_tenure_month', 'predicted', 'pred_proba_target_is_3M','pred_proba_target_is_4M','pred_proba_target_is_5M','pred_proba_target_is_6M','pred_proba_target_is_7M','pred_proba_target_is_8M','pred_proba_target_is_9M','pred_proba_target_is_10M','pred_proba_target_is_11M','pred_proba_target_is_12M_plus']
 
     for current_month in df_rfc_results_dict:
         df_rfc_results_dict[current_month] = df_rfc_results_dict[current_month].join(test_dict[current_month])[identifier_columns + prediction_columns]
@@ -167,7 +167,7 @@ def get_docomo_predictions(current_tm_list, rfc_models, df_docomo_test):
             rfc_models['docomo_tm_{}'.format(i)] = 12.0
 
     df_docomo_w_prediction = df_docomo_test.copy()
-    df_docomo_w_prediction['prediction'] = df_docomo_w_prediction['tenure_month'].map(docomo_avg_per_current_tm_dict)
+    df_docomo_w_prediction['predicted'] = df_docomo_w_prediction['tenure_month'].map(docomo_avg_per_current_tm_dict)
 
     identifier_columns = ['cust_account_id','cust_territory', 'cust_country','access_start_date']
     prediction_columns = ['tenure_months_completed', 'current_tenure_month', 'prediction']
