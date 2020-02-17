@@ -107,7 +107,7 @@ def create_results_dict(predictions_df_dict):
     for current_month in predictions_df_dict.keys():
         df_rfc_results_dict[current_month] = pd.DataFrame({'tenure_months_completed' : predictions_df_dict[current_month]['tenure_month'],
                                                            'current_tenure_month' : predictions_df_dict[current_month]['tenure_month'] + 1,
-                                                           'predicted': predictions_df_dict[current_month]['prediction']
+                                                           'predicted': predictions_df_dict[current_month]['predicted']
                                                           })
         df_rfc_results_dict[current_month]['pred_proba_target_is_3M'] = predictions_df_dict[current_month]['pred_proba_target_is_3M'] if 'pred_proba_target_is_3M' in predictions_df_dict[current_month].columns else 0
         df_rfc_results_dict[current_month]['pred_proba_target_is_4M'] = predictions_df_dict[current_month]['pred_proba_target_is_4M'] if 'pred_proba_target_is_4M' in predictions_df_dict[current_month].columns else 0
