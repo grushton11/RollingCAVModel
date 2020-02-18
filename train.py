@@ -393,6 +393,7 @@ def save_model_diagnostics(current_tm_list, target_month_list, model_diagnostics
                 model_diagnostics['tm_{}_target_{}'.format(current_tm,target_month)]['feature_importance'] = feature_importance_dict
 
     diagnostics_df = pd.DataFrame(model_diagnostics).transpose()
+    diagnostics_df = diagnostics_df.dropna()
     diagnostics_df['model_training_date'] = dt.today().strftime('%Y-%m-%d %H:%M')
     diagnostics_df['model'] = diagnostics_df.index
     diagnostics_df['training_calculation_date'] = dataiku.get_custom_variables()['training_calculation_date']
