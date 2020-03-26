@@ -100,7 +100,6 @@ def preprocessing_function(df,
                            target_month_list,
                            preferred_sports_shortlist,
                            preferred_competition_shortlist,
-                           acquisition_cohort_shortlist,
                            preferred_competition_dist_shortlist,
                            preferred_sport_dist_shortlist,
                            payment_method_shortlist,
@@ -115,8 +114,6 @@ def preprocessing_function(df,
     df['preferred_competition_by_hours'] = df['preferred_competition_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
     df['preferred_competition_1_in_trip_by_hours'] = df['preferred_competition_1_in_trip_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
     df['preferred_competition_2_in_trip_by_hours'] = df['preferred_competition_2_in_trip_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
-    df['acq_cohort_l3'] = df['acq_cohort_l3'].apply(lambda x: _cohort_type_mapping(x))
-    df['acq_cohort_l3'] = df['acq_cohort_l3'].apply(lambda x: x if x in acquisition_cohort_shortlist else 'Other')
     df['shared_account_proxy_binary'] = df['shared_account_proxy'].apply(lambda x: x if x > 0 else 0)
     df['previous_churn_binary'] = df['count_previous_churn'].apply(lambda x: 1 if x > 0 else 0)
     df['payment_method'] = df['payment_method'].apply(lambda x: x if x in payment_method_shortlist else 'Other')
@@ -127,12 +124,11 @@ def preprocessing_function(df,
     sport_dist_categoricals = [u'preferred_sport_in_trip_distribution_desc']
     competition_categoricals = ['preferred_competition_by_hours', u'preferred_competition_1_in_trip_by_hours', u'preferred_competition_2_in_trip_by_hours']
     competition_dist_categoricals = [u'preferred_competition_in_trip_distribution_desc']
-    acq_cohort_categoricals = [u'acq_cohort_l3']
     payment_method_categoricals = ['payment_method']
 
-    categoricals_to_dummy_encode = payment_method_categoricals + acq_cohort_categoricals + sport_categoricals + sport_dist_categoricals + competition_categoricals + competition_dist_categoricals
-    categoricals = [sport_categoricals, sport_dist_categoricals, competition_categoricals, competition_dist_categoricals, acq_cohort_categoricals, payment_method_categoricals]
-    shortlists = [preferred_sports_shortlist, preferred_sport_dist_shortlist, preferred_competition_shortlist, preferred_competition_dist_shortlist, acquisition_cohort_shortlist, payment_method_shortlist]
+    categoricals_to_dummy_encode = payment_method_categoricals + sport_categoricals + sport_dist_categoricals + competition_categoricals + competition_dist_categoricals
+    categoricals = [sport_categoricals, sport_dist_categoricals, competition_categoricals, competition_dist_categoricals, payment_method_categoricals]
+    shortlists = [preferred_sports_shortlist, preferred_sport_dist_shortlist, preferred_competition_shortlist, preferred_competition_dist_shortlist, payment_method_shortlist]
 
     # create a list of the dummies expected to match with data trained on
     dummies_with_prefix_list = []
