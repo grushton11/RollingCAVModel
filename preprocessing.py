@@ -114,7 +114,7 @@ def preprocessing_function(df,
     df['preferred_competition_by_hours'] = df['preferred_competition_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
     df['preferred_competition_1_in_trip_by_hours'] = df['preferred_competition_1_in_trip_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
     df['preferred_competition_2_in_trip_by_hours'] = df['preferred_competition_2_in_trip_by_hours'].apply(lambda x: x if x in preferred_competition_shortlist else 'Other')
-    df['shared_account_proxy_binary'] = df['shared_account_proxy'].apply(lambda x: x if x > 0 else 0)
+    #df['shared_account_proxy_binary'] = df['shared_account_proxy'].apply(lambda x: x if x > 0 else 0)
     df['previous_churn_binary'] = df['count_previous_churn'].apply(lambda x: 1 if x > 0 else 0)
     df['payment_method'] = df['payment_method'].apply(lambda x: x if x in payment_method_shortlist else 'Other')
 
@@ -179,7 +179,7 @@ def preprocessing_function(df,
         'ft_with_gc',
         'has_sc',
         'sleeping_baby',
-        'shared_account_proxy_binary',
+        #'shared_account_proxy_binary',
         'previous_churn_binary',
         'distinct_lr_devices_count',
         'proportion_of_streams_living_room',
