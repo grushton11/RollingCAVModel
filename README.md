@@ -1,4 +1,5 @@
-# RollingCAVModel
+# RollingCAVModel - * SNOWFLAKE VERSION *
 Train functions for Rolling CAV Model
 
-OK GEORGE ADD LOGS HERE
+- Created Snowflake branch
+- Removed acquisition cohort from pre-processing & train script
