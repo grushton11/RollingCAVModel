@@ -150,7 +150,7 @@ def split_out_japan_exception_customers(df_prep):
 
     # Filters to split out Docomo sleeping babies
     sleeping_baby_mask = df_prep['sleeping_baby'] == 1
-    is_docomo_mask = df_prep['acq_cohort_l3'] == 'Docomo'
+    is_docomo_mask = df_prep['cust_customer_type'] == 'Docomo'
     df_docomo = df_prep[sleeping_baby_mask & is_docomo_mask]
     df = df_prep[~(sleeping_baby_mask & is_docomo_mask)]
 
