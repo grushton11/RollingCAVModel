@@ -134,7 +134,7 @@ def preprocessing_function(df,
     categoricals = [sport_categoricals, sport_dist_categoricals, competition_categoricals, competition_dist_categoricals,
     #acq_cohort_categoricals,
     payment_method_categoricals]
-    shortlists = [preferred_sports_shortlist, preferred_sport_dist_shortlist, preferred_competition_shortlist, preferred_competition_dist_shortlist, 
+    shortlists = [preferred_sports_shortlist, preferred_sport_dist_shortlist, preferred_competition_shortlist, preferred_competition_dist_shortlist,
     #acquisition_cohort_shortlist,
     payment_method_shortlist]
 
@@ -189,7 +189,7 @@ def preprocessing_function(df,
         'sleeping_baby',
         'shared_account_proxy_binary',
         'previous_churn_binary',
-        'distinct_lr_devices_count',
+        'distinct_LR_devices_count',
         'proportion_of_streams_living_room',
         'number_of_device_hardware_types',
         'pper',
