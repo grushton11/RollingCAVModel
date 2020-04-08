@@ -104,7 +104,7 @@ def preprocessing_function(df,
                            preferred_competition_dist_shortlist,
                            preferred_sport_dist_shortlist,
                            payment_method_shortlist,
-                           alt_market)
+                           alt_market):
 
     # Unify payment types (e.g. reference CreditCard and Credit Card both as Credit Card)
     payment_method_feature_list = prepare_feature_payment_type(df)
