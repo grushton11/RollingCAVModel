@@ -33,7 +33,7 @@ def get_x_test(df_features, class_labels):
 
 def load_most_recent_model(project_id, folder_id):
     # Path to where models are saved
-    path_to_models = '/home/dataiku/dss/managed_datasets/{}/{}/'.format(project_id, folder_id)
+    path_to_models = '/home/dataiku/dss_data/managed_datasets/{}/{}/'.format(project_id, folder_id)
 
     # Get names of all models
     all_models = sorted(os.listdir(path_to_models), reverse=True)
